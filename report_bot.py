@@ -5,7 +5,7 @@ import os
 
 # --- CONFIGURATION ---
 # Replace with your actual website API URL (e.g., https://api.yourdomain.com)
-BASE_URL = "https://your-website-domain.com/api/v1" 
+BASE_URL = "https://api.tiktok.com/" 
 REPORT_ENDPOINT = f"{BASE_URL}/report/content"
 
 def send_spam_report(auth_token, target_id, reason_code=0):
@@ -35,9 +35,23 @@ if __name__ == "__main__":
     # Get the Moderator Token from GitHub Secrets
     token = os.getenv("MOD_TOKEN")
     
-    if not token:
-        print("ERROR: MOD_TOKEN secret is missing in GitHub Settings.")
+    if not token:len(sys.argv) < 3:
+        print("ERROR: Usage: python report_bot.py <target_id> <count>")
         sys.exit(1)
+
+    target_id_input = sys.argv[1]
+    report_count = int(sys.argv[2])
+
+    print(f"--- Launching Report Task for: {target_id_input} ---")
+    
+    for i in range(report_count):
+        print(f"Sending report {i+1} of {report_count}...")
+        send_spam_report(token, target_id_input)
+        # Sleep prevents your server from blocking the GitHub IP
+        time.sleep(2) 
+
+    print("--- Task Finished ---")
+
 
     # Get inputs from the GitHub Action workflow
     if len(sys.argv) < 3:
