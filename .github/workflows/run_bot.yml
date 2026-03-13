@@ -1,0 +1,32 @@
+name: Moderator Tool - Spam Reporter
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_id:
+        description: 'ID of the User or Video to report'
+        required: true
+      report_count:
+        description: 'Number of reports to send (e.g. 5)'
+        required: true
+        default: '5'
+
+jobs:
+  run-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Requests
+        run: pip install requests
+
+      - name: Execute Bot
+        env:
+          MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
+        run: python report_bot.py "${{ github.event.inputs.target_id }}" "${{ github.event.inputs.report_count }}"
